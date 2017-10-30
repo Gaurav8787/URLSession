@@ -21,15 +21,8 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-//        DispatchQueue.global(qos: .background).async {
-//            print("This is run on the background queue")
-            self.callPostMethod()
-      //  self.callGetMethod()
-            
-          
-//        }
-        
-        
+        self.callPostMethod()
+       //  self.callGetMethod()
     }
 
     override func didReceiveMemoryWarning() {
@@ -57,9 +50,7 @@ class ViewController: UIViewController {
                 if let error = error {
                   // self.errorMessage += "DataTask error: " + error.localizedDescription + "\n"
                     print(error.localizedDescription)
-                } else if let data = data,
-                    let response = response as? HTTPURLResponse,
-                    response.statusCode == 200 {
+                } else if let data = data, let response = response as? HTTPURLResponse, response.statusCode == 200 {
                     
                     print(data)
                     
@@ -120,44 +111,27 @@ class ViewController: UIViewController {
             activity.center=view.center
             activity.startAnimating()
             view.addSubview(activity)
-            
-            let dict = ["key": "cb784502bffab6e"] as [String: Any]
-            if let jsonData = try? JSONSerialization.data(withJSONObject: dict, options: []) {
-                
-                let url = NSURL(string: "http://date.jsontest.com/")!
-                let request = NSMutableURLRequest(url: url as URL)
-                request.httpMethod = "POST"
-                
-                request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-                
-                request.httpBody = jsonData
-                
-                let task = URLSession.shared.dataTask(with: request as URLRequest) { data,response,error in
-                    if error != nil{
-                        print(error?.localizedDescription)
-                        return
-                    }
-                    
-                    do {
+        
+                 APIManager.sharedInstance.getData(){ (mydata) in
                         
-                        if let objJsn = try JSONSerialization.jsonObject(with: data!, options: []) as? [String:Any] {
-                            
-                            print(objJsn["time"] as! String)
-          
+                        if mydata != "" {
+                            print(mydata)
+                        } else {
+                            print("no data")
                         }
                         
-                    } catch let error as NSError {
-                        print(error)
+                        
                     }
-                    
+        
+        
+        
+        
+        
+        
                     DispatchQueue.main.async {
-                        //  completion(self.tracks, self.errorMessage)
                         activity.stopAnimating()
                         activity.removeFromSuperview()
                     }
-                }          
-                task.resume()
-            }
         
     }
 
